@@ -7,6 +7,7 @@ const myPeer=new Peer(undefined, {
 
 let myVideoStream;
 let currentPeer;
+let toolType='draw';
 const myVideo=document.createElement('video');
 myVideo.muted=true;
 const peers={};
@@ -206,9 +207,9 @@ const openBoard=() => {
     socket.on('onDraw', (data) => {
         console.log("called onDraw");
         ctx.lineWidth = 5;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = 'blue';
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = 'blue';
         ctx.beginPath();
         ctx.moveTo(data.last_mouse.x, data.last_mouse.y);
         ctx.lineTo(data.mouse.x, data.mouse.y);
@@ -240,9 +241,9 @@ const openBoard=() => {
         console.log("painting");
         socket.emit('draw', { mouse: {x: mouse.x, y: mouse.y}, last_mouse: {x: last_mouse.x, y: last_mouse.y} });
         ctx.lineWidth = 5;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = 'blue';
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = 'blue';
         ctx.beginPath();
         ctx.moveTo(last_mouse.x, last_mouse.y);
         ctx.lineTo(mouse.x, mouse.y);
