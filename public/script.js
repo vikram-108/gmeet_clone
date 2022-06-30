@@ -11,6 +11,7 @@ let toolType='draw';
 const myVideo=document.createElement('video');
 myVideo.muted=true;
 const peers={};
+const conns={};
 navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true
@@ -28,7 +29,14 @@ navigator.mediaDevices.getUserMedia({
             currentPeer=call.peerConnection;
             // console.log(currentPeer);
         })
+
     })
+
+    // myPeer.on('connection', (dcon) => {
+    //     console.log("dcon called");
+    //     conns[dcon.peer]=dcon;
+    // })
+
     socket.on('user-connected', (userId) => {
         console.log("call 1");
         connectToNewUser(userId, stream);
@@ -55,7 +63,9 @@ socket.on('user-disconnected', (userId)=>{
     console.log(peers[userId]);
     if (peers[userId]) {
         console.log("going inside");
+        // socket.emit('handleClose', userId);
         peers[userId].emit('close');
+        // conns[userId].close();
     }
 })
 
@@ -76,17 +86,27 @@ function connectToNewUser(userId, stream) {
     const call=myPeer.call(userId,stream);
     const video=document.createElement('video');
     // video.muted=true;
+
+    // var dcon=myPeer.connect(userId);
+    // conns[userId]=dcon;
+
     call.on('stream', userVideoStream => {
+        console.log("appending video of new user");
         addVideoStream(video, userVideoStream);
         currentPeer=call.peerConnection;
     })
+
+    // dcon.on('close', () => {
+    //     console.log("call closed");
+    //     myVideo.remove(); 
+    // })
+    
     call.on('close', ()=>{
         console.log("call closed");
-        // video.remove();
+        video.remove();
         video.pause();
         video.removeAttribute('src');
         video.load();
-        video.remove();
     })
     peers[userId]=call;
     console.log(`peers userid set for ${userId}`);
@@ -248,7 +268,7 @@ const changeToErase=() => {
     }, false);
 
     var onPaint = function() {
-        console.log("painting");
+        // console.log("painting");
         socket.emit('draw', { mouse: {x: mouse.x, y: mouse.y}, last_mouse: {x: last_mouse.x, y: last_mouse.y}, tool_type: toolType});
         ctx.lineWidth = 5;
         if (toolType=='erase') ctx.lineWidth=10;

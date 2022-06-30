@@ -97,7 +97,7 @@ app.post('/mail', (req,res)=>{
 })
 
 app.get('/room:room', (req,res)=>{
-    console.log("hello");
+    // console.log("hello");
     if (req.cookies[COOKIE_NAME]!=undefined){
         me=jwt.verify(req.cookies[COOKIE_NAME], JWT_SECRET);
         res.render('room', {roomId: req.params.room, userInfo: me}); 
@@ -132,7 +132,7 @@ io.on('connection', socket =>{
         })
         
         socket.on('draw', (data)=> {
-            console.log("socket draw called");
+            // console.log("socket draw called");
             cons.forEach(con => {
                 if (con.id!==socket.id){
                     con.emit('onDraw', {
