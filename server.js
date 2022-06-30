@@ -144,6 +144,7 @@ io.on('connection', socket =>{
                             x: data.last_mouse.x,
                             y: data.last_mouse.y
                         },
+                        tool_type: data.tool_type
                     })
                 }
             });
