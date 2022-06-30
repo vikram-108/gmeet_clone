@@ -192,6 +192,14 @@ const openBoard=() => {
     }
 }
 
+const changeToDraw=() => {
+    toolType='draw';
+}
+
+const changeToErase=() => {
+    toolType='erase';
+}
+
 (function() {
     var canvas = document.querySelector('#canvas');
     var ctx = canvas.getContext('2d');
@@ -207,9 +215,11 @@ const openBoard=() => {
     socket.on('onDraw', (data) => {
         console.log("called onDraw");
         ctx.lineWidth = 5;
+        if (data.tool_type=='erase') ctx.lineWidth=10;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
         ctx.strokeStyle = 'blue';
+        if (data.tool_type=='erase') ctx.strokeStyle='white';
         ctx.beginPath();
         ctx.moveTo(data.last_mouse.x, data.last_mouse.y);
         ctx.lineTo(data.mouse.x, data.mouse.y);
@@ -239,11 +249,13 @@ const openBoard=() => {
 
     var onPaint = function() {
         console.log("painting");
-        socket.emit('draw', { mouse: {x: mouse.x, y: mouse.y}, last_mouse: {x: last_mouse.x, y: last_mouse.y} });
+        socket.emit('draw', { mouse: {x: mouse.x, y: mouse.y}, last_mouse: {x: last_mouse.x, y: last_mouse.y}, tool_type: toolType});
         ctx.lineWidth = 5;
+        if (toolType=='erase') ctx.lineWidth=10;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
         ctx.strokeStyle = 'blue';
+        if (toolType=='erase') ctx.strokeStyle='white';
         ctx.beginPath();
         ctx.moveTo(last_mouse.x, last_mouse.y);
         ctx.lineTo(mouse.x, mouse.y);
